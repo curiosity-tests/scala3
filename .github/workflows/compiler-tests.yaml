@@ -29,7 +29,7 @@ permissions:
 env:
   # The one variable that separates the arms: on baseline, action-checkout
   # skips its Set up Chalk step entirely.
-  CHALK_ON: ${{ github.event_name == 'workflow_dispatch' && inputs.leg != 'baseline' }}
+  CHALK_ON: ${{ inputs.leg == 'instrumented' }}
   DOTTY_CI_RUN: true
 
 run-name: "Compiler Tests ${{ inputs.leg || 'push' }} ${{ inputs.racecar_run }}"
@@ -37,7 +37,7 @@ run-name: "Compiler Tests ${{ inputs.leg || 'push' }} ${{ inputs.racecar_run }}"
 jobs:
 
   test-scala3-compiler-nonbootstrapped:
-    if: github.event_name != 'pull_request' || !contains(github.event.pull_request.body, '[skip ci]')
+    if: ${{ 'push' != 'pull_request' || !contains(github.event.pull_request.body, '[skip ci]') }}
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
@@ -71,7 +71,7 @@ jobs:
           ./project/scripts/cmdTests
 
   test-scala3-compiler-bootstrapped:
-    if: github.event_name != 'pull_request' || !contains(github.event.pull_request.body, '[skip ci]')
+    if: ${{ 'push' != 'pull_request' || !contains(github.event.pull_request.body, '[skip ci]') }}
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
@@ -105,7 +105,7 @@ jobs:
           ./project/scripts/bootstrappedOnlyCmdTests
 
   test-scala3-sbt-bridge-nonbootstrapped:
-    if: github.event_name != 'pull_request' || !contains(github.event.pull_request.body, '[skip ci]')
+    if: ${{ 'push' != 'pull_request' || !contains(github.event.pull_request.body, '[skip ci]') }}
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
@@ -132,7 +132,7 @@ jobs:
         run: ./project/scripts/sbt scala3-sbt-bridge-nonbootstrapped/test
 
   test-scala3-sbt-bridge-bootstrapped:
-    if: github.event_name != 'pull_request' || !contains(github.event.pull_request.body, '[skip ci]')
+    if: ${{ 'push' != 'pull_request' || !contains(github.event.pull_request.body, '[skip ci]') }}
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
@@ -159,7 +159,7 @@ jobs:
         run: ./project/scripts/sbt scala3-sbt-bridge-bootstrapped/test
 
   test-tasty-core-nonbootstrapped:
-    if: github.event_name != 'pull_request' || !contains(github.event.pull_request.body, '[skip ci]')
+    if: ${{ 'push' != 'pull_request' || !contains(github.event.pull_request.body, '[skip ci]') }}
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
@@ -186,7 +186,7 @@ jobs:
         run: ./project/scripts/sbt tasty-core-nonbootstrapped/test
 
   test-tasty-core-bootstrapped:
-    if: github.event_name != 'pull_request' || !contains(github.event.pull_request.body, '[skip ci]')
+    if: ${{ 'push' != 'pull_request' || !contains(github.event.pull_request.body, '[skip ci]') }}
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
@@ -213,7 +213,7 @@ jobs:
         run: ./project/scripts/sbt tasty-core-bootstrapped/test
 
   test-scala3-directives-parser-nonbootstrapped:
-    if: github.event_name != 'pull_request' || !contains(github.event.pull_request.body, '[skip ci]')
+    if: ${{ 'push' != 'pull_request' || !contains(github.event.pull_request.body, '[skip ci]') }}
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
@@ -240,7 +240,7 @@ jobs:
         run: ./project/scripts/sbt scala3-directives-parser-nonbootstrapped/test
 
   test-scala3-directives-parser-bootstrapped:
-    if: github.event_name != 'pull_request' || !contains(github.event.pull_request.body, '[skip ci]')
+    if: ${{ 'push' != 'pull_request' || !contains(github.event.pull_request.body, '[skip ci]') }}
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
@@ -267,7 +267,7 @@ jobs:
         run: ./project/scripts/sbt scala3-directives-parser-bootstrapped/test
 
   test-scala-js:
-    if: github.event_name != 'pull_request' || !contains(github.event.pull_request.body, '[skip ci]')
+    if: ${{ 'push' != 'pull_request' || !contains(github.event.pull_request.body, '[skip ci]') }}
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
@@ -306,7 +306,7 @@ jobs:
   # TODO Scala.js on Windows
 
   test-repl:
-    if: github.event_name != 'pull_request' || !contains(github.event.pull_request.body, '[skip ci]')
+    if: ${{ 'push' != 'pull_request' || !contains(github.event.pull_request.body, '[skip ci]') }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -347,7 +347,7 @@ jobs:
         run: ./project/scripts/sbt scala3-repl/test
 
   test-presentation-compiler:
-    if: github.event_name != 'pull_request' || !contains(github.event.pull_request.body, '[skip ci]')
+    if: ${{ 'push' != 'pull_request' || !contains(github.event.pull_request.body, '[skip ci]') }}
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
@@ -374,7 +374,7 @@ jobs:
         run: ./project/scripts/sbt scala3-presentation-compiler/test
 
   test-language-server:
-    if: github.event_name != 'pull_request' || !contains(github.event.pull_request.body, '[skip ci]')
+    if: ${{ 'push' != 'pull_request' || !contains(github.event.pull_request.body, '[skip ci]') }}
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
