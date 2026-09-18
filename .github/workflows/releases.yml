@@ -31,7 +31,7 @@ jobs:
   # run then on scala/scala3. Forks running this workflow still build and test
   # the packages.
   publish-sdkman:
-    uses:  ./.github/workflows/publish-sdkman.yml
+    uses: ./.github/workflows/publish-sdkman.yml
     if: github.repository == 'scala/scala3'
     with:
       version: ${{ inputs.version }}
@@ -44,39 +44,12 @@ jobs:
     outputs:
       digest: ${{ steps.digest.outputs.digest }}
     steps:
-      - name: Compute the SHA256 of scala3-${{ inputs.version }}-x86_64-pc-win32.zip in GitHub Release
-        id: digest
-        env:
-          VERSION: ${{ inputs.version }}
-        run: |
-          # TODO(puerco): Verify provenance of this artifact
-          curl -o artifact.zip -L "https://github.com/${{ github.repository }}/releases/download/$VERSION/scala3-$VERSION-x86_64-pc-win32.zip"
-          echo "digest=$(sha256sum artifact.zip | cut -d " " -f 1)" >> "$GITHUB_OUTPUT"
+    - name: Compute the SHA256 of scala3-${{ inputs.version }}-x86_64-pc-win32.zip in GitHub Release
+      id: digest
+      env:
+        VERSION: ${{ inputs.version }}
+      run: |
+        # TODO(puerco): Verify provenance of this artifact
+        curl -o artifact.zip -L "https://github.com/${{ github.repository }}/releases/download/$VERSION/scala3-$VERSION-x86_64-pc-win32.zip"
+        echo "digest=$(sha256sum artifact.zip | cut -d " " -f 1)" >> "$GITHUB_OUTPUT"
 
-  build-chocolatey:
-    uses: ./.github/workflows/build-chocolatey.yml
-    permissions:
-      contents: read
-    needs: compute-digest
-    with:
-      version: ${{ inputs.version }}
-      url    : 'https://github.com/${{ github.repository }}/releases/download/${{ inputs.version }}/scala3-${{ inputs.version }}-x86_64-pc-win32.zip'
-      digest : ${{ needs.compute-digest.outputs.digest }}
-  test-chocolatey:
-    uses: ./.github/workflows/test-chocolatey.yml
-    permissions:
-      actions: read  # Granted because the called workflow declares it, unused for stable versions
-    needs: build-chocolatey
-    with:
-      version     : ${{ inputs.version }}
-      java-version: 17
-  publish-chocolatey:
-    uses: ./.github/workflows/publish-chocolatey.yml
-    if: github.repository == 'scala/scala3'
-    needs: [ build-chocolatey, test-chocolatey ]
-    with:
-      version: ${{ inputs.version }}
-    secrets:
-      API-KEY: ${{ secrets.CHOCOLATEY_KEY }}
-
-  # TODO: ADD RELEASE WORKFLOW TO CHOCOLATEY AND OTHER PACKAGE MANAGERS HERE
