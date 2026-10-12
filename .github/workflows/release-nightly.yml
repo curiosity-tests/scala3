@@ -3,8 +3,6 @@ run-name: Nightly Release of Scala 3 (${{ github.sha }})
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 3 * * *'  # Every day at 3 AM
 
 # The nightly documentation is pushed to scala/nightly.scala-lang.org with a
 # GitHub App token, and Maven artifacts with the project's Sonatype credentials,
